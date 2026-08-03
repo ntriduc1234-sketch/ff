@@ -3,26 +3,40 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      THEOS: ${{ github.workspace }}/theos
+      SDKROOT: ${{ github.workspace }}/sdks/iPhoneOS14.5.sdk
     steps:
       - uses: actions/checkout@v3
-      - name: Install Theos & SDK
+
+      - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y git make clang lld unzip
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          wget -O sdks.zip https://github.com/theos/sdks/archive/master.zip
-          unzip sdks.zip -d $HOME/
-          export THEOS=$HOME/theos
-          export SDKROOT=$HOME/sdks-master/iPhoneOS14.5.sdk
-          echo "export THEOS=$HOME/theos" >> ~/.bashrc
-          echo "export SDKROOT=$HOME/sdks-master/iPhoneOS14.5.sdk" >> ~/.bashrc
+          sudo apt install -y git make clang lld unzip curl
+
+      - name: Download Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
+
+      - name: Download iOS SDK
+        run: |
+          mkdir -p ${{ env.THEOS }}/sdks
+          curl -L https://github.com/theos/sdks/archive/refs/heads/master.zip -o sdks.zip
+          unzip -q sdks.zip -d ${{ env.THEOS }}/sdks
+          mv ${{ env.THEOS }}/sdks/sdks-master/* ${{ env.THEOS }}/sdks/
+          rm -rf ${{ env.THEOS }}/sdks/sdks-master sdks.zip
+
+      - name: Verify SDK exists
+        run: |
+          ls -la ${{ env.THEOS }}/sdks/
+          test -d ${{ env.SDKROOT }} || (echo "SDK missing!" && exit 1)
+
       - name: Build package
         run: |
-          export THEOS=$HOME/theos
-          export SDKROOT=$HOME/sdks-master/iPhoneOS14.5.sdk
           make package FINALPACKAGE=1
+
       - name: Upload IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: modded-ipa
           path: packages/*.ipa
