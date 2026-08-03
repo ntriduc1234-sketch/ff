@@ -2,17 +2,19 @@ name: Build IPA
 on: [push]
 jobs:
   build:
-    runs-on: macos-14   # hoặc macos-latest
+    runs-on: macos-14
     env:
       THEOS: ${{ github.workspace }}/theos
       SDKROOT: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install ldid
+        run: brew install ldid
+
       - name: Install Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
-          # Xcode toolchain đã có sẵn, không cần cài thêm
 
       - name: Build package
         run: |
