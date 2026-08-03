@@ -22,7 +22,7 @@ jobs:
           export SDKROOT=$HOME/sdks-master/iPhoneOS14.5.sdk
           make package FINALPACKAGE=1
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: modded-ipa
           path: packages/*.ipa
