@@ -2,42 +2,17 @@ name: Build IPA
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14   # hoặc macos-latest
     env:
       THEOS: ${{ github.workspace }}/theos
-      SDKROOT: ${{ github.workspace }}/theos/sdks/iPhoneOS14.5.sdk
+      SDKROOT: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git make clang lld unzip curl wget cmake ninja-build
-
-      - name: Download Theos
+      - name: Install Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
-
-      - name: Download iOS SDK
-        run: |
-          mkdir -p ${{ env.THEOS }}/sdks
-          curl -L https://github.com/theos/sdks/archive/refs/heads/master.zip -o sdks.zip
-          unzip -q sdks.zip -d ${{ env.THEOS }}/sdks
-          mv ${{ env.THEOS }}/sdks/sdks-master/* ${{ env.THEOS }}/sdks/
-          rm -rf ${{ env.THEOS }}/sdks/sdks-master sdks.zip
-
-      - name: Setup toolchain (force LLD linker)
-        run: |
-          mkdir -p ${{ env.THEOS }}/toolchain/linux/iphone/bin
-          ln -sf /usr/bin/clang ${{ env.THEOS }}/toolchain/linux/iphone/bin/clang
-          ln -sf /usr/bin/clang++ ${{ env.THEOS }}/toolchain/linux/iphone/bin/clang++
-          ln -sf /usr/bin/ld.lld ${{ env.THEOS }}/toolchain/linux/iphone/bin/ld
-          echo "TARGET = iphone:clang:latest:7.0" > ${{ env.THEOS }}/toolchain/linux/iphone/config.mk
-
-      - name: Verify toolchain
-        run: |
-          ls -la ${{ env.THEOS }}/toolchain/linux/iphone/bin/
-          ${{ env.THEOS }}/toolchain/linux/iphone/bin/clang --version
+          # Xcode toolchain đã có sẵn, không cần cài thêm
 
       - name: Build package
         run: |
