@@ -20,6 +20,7 @@ jobs:
 
       - name: Download Theos toolchain (Linux)
         run: |
+          rm -rf ${{ env.THEOS }}/toolchain
           git clone https://github.com/theos/toolchain.git ${{ env.THEOS }}/toolchain
 
       - name: Download iOS SDK
