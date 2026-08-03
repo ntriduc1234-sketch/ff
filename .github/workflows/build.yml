@@ -7,7 +7,7 @@ jobs:
       THEOS: ${{ github.workspace }}/theos
       SDKROOT: ${{ github.workspace }}/sdks/iPhoneOS14.5.sdk
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -36,7 +36,7 @@ jobs:
           make package FINALPACKAGE=1
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: modded-ipa
           path: packages/*.ipa
