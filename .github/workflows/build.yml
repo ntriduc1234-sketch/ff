@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       THEOS: ${{ github.workspace }}/theos
-      SDKROOT: ${{ github.workspace }}/theos/sdks/iPhoneOS14.5.sdk   # <<< SỬA CHỖ NÀY
+      SDKROOT: ${{ github.workspace }}/theos/sdks/iPhoneOS14.5.sdk
     steps:
       - uses: actions/checkout@v4
 
@@ -17,6 +17,10 @@ jobs:
       - name: Download Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
+
+      - name: Download Theos toolchain (Linux)
+        run: |
+          git clone https://github.com/theos/toolchain.git ${{ env.THEOS }}/toolchain
 
       - name: Download iOS SDK
         run: |
