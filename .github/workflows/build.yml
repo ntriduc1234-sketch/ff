@@ -16,6 +16,20 @@ jobs:
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
 
+      - name: Create control file (required for packaging)
+        run: |
+          mkdir -p layout/DEBIAN
+          cat > layout/DEBIAN/control <<EOF
+          Package: headlocj
+          Name: headlocj
+          Version: 1.0
+          Architecture: iphoneos-arm
+          Description: Wasteland modded app
+          Maintainer: Ash
+          Author: Ash
+          Section: Applications
+          EOF
+
       - name: Build package
         run: |
           make package FINALPACKAGE=1
