@@ -18,10 +18,14 @@ jobs:
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
 
-      - name: Download Theos toolchain (Linux)
+      - name: Download Theos toolchain (Linux) - using zip
         run: |
           rm -rf ${{ env.THEOS }}/toolchain
-          git clone https://github.com/theos/toolchain.git ${{ env.THEOS }}/toolchain
+          mkdir -p ${{ env.THEOS }}/toolchain
+          curl -L https://github.com/theos/toolchain/archive/refs/heads/main.zip -o toolchain.zip
+          unzip -q toolchain.zip -d ${{ env.THEOS }}/toolchain
+          mv ${{ env.THEOS }}/toolchain/toolchain-main/* ${{ env.THEOS }}/toolchain/
+          rm -rf ${{ env.THEOS }}/toolchain/toolchain-main toolchain.zip
 
       - name: Download iOS SDK
         run: |
