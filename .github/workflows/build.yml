@@ -16,7 +16,7 @@ jobs:
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ env.THEOS }}
 
-      - name: Create control file (required for packaging)
+      - name: Create control file
         run: |
           mkdir -p layout/DEBIAN
           cat > layout/DEBIAN/control <<EOF
@@ -30,9 +30,27 @@ jobs:
           Section: Applications
           EOF
 
-      - name: Build package
+      - name: Build .app
         run: |
-          make package FINALPACKAGE=1
+          make
+
+      - name: Create IPA from .app
+        run: |
+          # Tìm file .app (thường nằm trong .theos/obj/...)
+          APP_PATH=$(find . -name "*.app" -type d -path "*/obj/*" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            APP_PATH=$(find . -name "*.app" -type d | head -n 1)
+          fi
+          if [ -z "$APP_PATH" ]; then
+            echo "Không tìm thấy file .app!"
+            exit 1
+          fi
+          echo "Found app at: $APP_PATH"
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r headlocj.ipa Payload/
+          mkdir -p packages
+          mv headlocj.ipa packages/
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
