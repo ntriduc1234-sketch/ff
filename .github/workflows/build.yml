@@ -34,7 +34,7 @@ jobs:
         run: |
           make
 
-      - name: Create IPA from .app
+      - name: Create IPA correctly
         run: |
           # Tìm file .app (thường nằm trong .theos/obj/...)
           APP_PATH=$(find . -name "*.app" -type d -path "*/obj/*" | head -n 1)
@@ -46,9 +46,15 @@ jobs:
             exit 1
           fi
           echo "Found app at: $APP_PATH"
+          
+          # Tạo thư mục Payload và copy .app vào
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
+          
+          # Nén đúng cấu trúc: Payload/ ở root
           zip -r headlocj.ipa Payload/
+          
+          # Tạo thư mục packages và di chuyển
           mkdir -p packages
           mv headlocj.ipa packages/
 
