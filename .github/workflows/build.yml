@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       THEOS: ${{ github.workspace }}/theos
-      SDKROOT: ${{ github.workspace }}/sdks/iPhoneOS14.5.sdk
+      SDKROOT: ${{ github.workspace }}/theos/sdks/iPhoneOS14.5.sdk   # <<< SỬA CHỖ NÀY
     steps:
       - uses: actions/checkout@v4
 
